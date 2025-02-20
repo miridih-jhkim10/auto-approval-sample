@@ -1,9 +1,11 @@
 name: r2d m2d auto approve
-
-on: pull_request_target
-
+on:
+  pull_request:
+    branches:
+      - develop
 jobs:
   auto-approve:
+    if: ${{ github.event.pull_request.head.ref == 'master' || github.event.pull_request.head.ref == 'release' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -12,22 +14,9 @@ jobs:
         id: generate_jwt
         uses: tibdex/github-app-token@v2
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: Check PR base and head
-        id: check_pr
-        run: |
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
-          
-          if [[ ("$BASE_BRANCH" == "develop") && ("$HEAD_BRANCH" == "master" || "$HEAD_BRANCH" == "release") ]]; then
-            echo "APPROVE=true" >> $GITHUB_ENV
-          else
-            echo "APPROVE=false" >> $GITHUB_ENV
-          fi
+          app_id: ${{ secrets.AUTO_APPROVE_APP_ID }}
+          private_key: ${{ secrets.AUTO_APPROVE_APP_PRIVATE_KEY }}
       - name: Approve PR
-        if: env.APPROVE == 'true'
         uses: hmarr/auto-approve-action@v3
         with:
           github-token: ${{ steps.generate_jwt.outputs.token }}

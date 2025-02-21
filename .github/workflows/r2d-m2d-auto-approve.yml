@@ -10,13 +10,5 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Generate GitHub App JWT
-        id: generate_jwt
-        uses: tibdex/github-app-token@v2
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Approve PR
         uses: hmarr/auto-approve-action@v4
-        with:
-          github-token: ${{ steps.generate_jwt.outputs.token }}

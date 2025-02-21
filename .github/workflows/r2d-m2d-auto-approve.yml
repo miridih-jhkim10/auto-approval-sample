@@ -1,11 +1,10 @@
-name: r2d m2d auto approve
+name: Auto approve
 on: pull_request_target
+
 jobs:
-  auto-approve:
-    if: ${{ github.event.pull_request.head.ref == 'master' || github.event.pull_request.head.ref == 'release' }}
+  build:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
     steps:
-      - name: Approve PR
-        uses: hmarr/auto-approve-action@v4
+      - uses: hmarr/auto-approve-action@v4
